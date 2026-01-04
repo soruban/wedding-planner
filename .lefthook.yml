@@ -1,0 +1,9 @@
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      run: pnpm lint
+      glob: '**/*.{js,jsx,ts,tsx}'
+    prettier:
+      run: pnpm format:check
+      glob: '**/*.{js,jsx,ts,tsx,json,md}'
