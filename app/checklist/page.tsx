@@ -75,21 +75,21 @@ export default function ChecklistPage() {
       </form>
 
       <ul className="space-y-3">
-        {items.map((it) => (
-          <li key={it.id} className="flex items-center justify-between rounded-md border p-3">
-            <div className="flex items-center gap-3">
-              <input type="checkbox" checked={!!it.done} onChange={() => void toggleDone(it)} />
-              <div className={` ${it.done ? 'line-through text-zinc-500' : ''}`}>{it.title}</div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button asChild>
-                <button onClick={() => void handleDelete(it.id)} className="h-8">
+        {items
+          .sort((a, b) => (a.done === b.done ? 0 : a.done ? 1 : -1))
+          .map((it) => (
+            <li key={it.id} className="flex items-center justify-between rounded-md border p-3">
+              <div className="flex items-center gap-3">
+                <input type="checkbox" checked={!!it.done} onChange={() => void toggleDone(it)} />
+                <div className={` ${it.done ? 'line-through text-zinc-500' : ''}`}>{it.title}</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button onClick={() => void handleDelete(it.id)} className="h-8">
                   Delete
-                </button>
-              </Button>
-            </div>
-          </li>
-        ))}
+                </Button>
+              </div>
+            </li>
+          ))}
       </ul>
     </main>
   );

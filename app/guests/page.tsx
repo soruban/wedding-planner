@@ -83,10 +83,8 @@ export default function GuestsPage() {
               {g.email && <div className="text-sm text-zinc-500">{g.email}</div>}
             </div>
             <div className="flex items-center gap-2">
-              <Button asChild>
-                <button onClick={() => void handleDelete(g.id)} className="h-8">
-                  Delete
-                </button>
+              <Button onClick={() => void handleDelete(g.id)} className="h-8">
+                Delete
               </Button>
             </div>
           </li>
