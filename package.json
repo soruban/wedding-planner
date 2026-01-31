@@ -9,7 +9,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "postinstall": "lefthook install"
+    "postinstall": "if [ -z \"$SKIP_POSTINSTALL\" ]; then lefthook install; fi"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",

@@ -1,4 +1,4 @@
-import { Vendor } from './models/vendor';
+import { Vendor } from '../models/vendor';
 
 let vendors: Vendor[] = [
   {

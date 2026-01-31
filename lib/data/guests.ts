@@ -1,4 +1,4 @@
-import { Guest } from './models/guest';
+import { Guest } from '../models/guest';
 
 let guests: Guest[] = [
   { id: '1', name: 'Alice Smith', email: 'alice@example.com', invited: true },

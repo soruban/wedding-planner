@@ -1,4 +1,4 @@
-import { ChecklistItem } from './models/checklist';
+import { ChecklistItem } from '../models/checklist';
 
 let items: ChecklistItem[] = [
   { id: '1', title: 'Book venue', done: true },

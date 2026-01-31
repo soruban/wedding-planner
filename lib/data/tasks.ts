@@ -1,4 +1,4 @@
-import { Task } from './models/task';
+import { Task } from '../models/task';
 
 let tasks: Task[] = [
   { id: '1', title: 'Book photographer', date: '2025-02-15', done: false },
