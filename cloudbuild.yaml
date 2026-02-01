@@ -6,6 +6,8 @@ steps:
         'build',
         '-t',
         'us-central1-docker.pkg.dev/$PROJECT_ID/wedding-planner-repo/wedding-planner:$SHORT_SHA',
+        '--build-arg',
+        'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
         '.',
       ]
 
