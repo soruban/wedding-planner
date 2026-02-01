@@ -4,6 +4,8 @@ import { PrismaClient } from '@prisma/client';
 
 const connectionString = process.env.DATABASE_URL;
 
+// Force HMR
+
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

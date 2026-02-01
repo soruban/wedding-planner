@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
-import { deleteVenue } from '@/lib/data/venues';
+import { prisma } from '@/lib/prisma';
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  deleteVenue(id);
+  await prisma.venue.delete({
+    where: { id },
+  });
   return NextResponse.json({ ok: true });
 }

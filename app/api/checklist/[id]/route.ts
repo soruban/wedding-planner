@@ -1,16 +1,28 @@
 import { NextResponse } from 'next/server';
-import { updateItem, deleteItem } from '@/lib/data/checklist';
+import { prisma } from '@/lib/prisma';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await request.json();
-  const updated = updateItem(id, body);
-  if (!updated) return NextResponse.json({ error: 'not found' }, { status: 404 });
-  return NextResponse.json(updated);
+  try {
+    const updated = await prisma.checklistItem.update({
+      where: { id },
+      data: body,
+    });
+    return NextResponse.json(updated);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to update item' }, { status: 500 });
+  }
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  deleteItem(id);
-  return NextResponse.json({ ok: true });
+  try {
+    await prisma.checklistItem.delete({
+      where: { id },
+    });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete item' }, { status: 500 });
+  }
 }

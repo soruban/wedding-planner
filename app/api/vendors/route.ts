@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getVendors, addVendor } from '@/lib/data/vendors';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-  return NextResponse.json(getVendors());
+  const vendors = await prisma.vendor.findMany();
+  return NextResponse.json(vendors);
 }
 
 export async function POST(request: Request) {
@@ -10,11 +11,13 @@ export async function POST(request: Request) {
   if (!body?.name) {
     return NextResponse.json({ error: 'name is required' }, { status: 400 });
   }
-  const vendor = addVendor({
-    name: body.name,
-    category: body.category,
-    contact: body.contact,
-    booked: !!body.booked,
+  const vendor = await prisma.vendor.create({
+    data: {
+      name: body.name,
+      category: body.category,
+      contact: body.contact,
+      booked: !!body.booked,
+    },
   });
   return NextResponse.json(vendor, { status: 201 });
 }

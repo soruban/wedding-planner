@@ -2,14 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs';
+import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ModeToggle } from '@/components/mode-toggle';
 import { MobileNav } from '@/components/mobile-nav';
@@ -64,7 +57,6 @@ export default function RootLayout({
                 <div className="flex items-center gap-4">
                   <SignedOut>
                     <SignInButton />
-                    <SignUpButton />
                   </SignedOut>
                   <SignedIn>
                     <UserButton />

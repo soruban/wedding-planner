@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getVenues, addVenue } from '@/lib/data/venues';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-  return NextResponse.json(getVenues());
+  const venues = await prisma.venue.findMany();
+  return NextResponse.json(venues);
 }
 
 export async function POST(request: Request) {
@@ -13,6 +14,13 @@ export async function POST(request: Request) {
   if (!body?.location) {
     return NextResponse.json({ error: 'location is required' }, { status: 400 });
   }
-  const venue = addVenue({ name: body.name, location: body.location });
+
+  const venue = await prisma.venue.create({
+    data: {
+      name: body.name,
+      location: body.location,
+    },
+  });
+
   return NextResponse.json(venue, { status: 201 });
 }

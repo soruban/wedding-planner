@@ -21,9 +21,18 @@ export default function VendorsPage() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const res = await fetch('/api/vendors');
-      const data = (await res.json()) as Vendor[];
-      if (mounted) setVendors(data);
+      try {
+        const res = await fetch('/api/vendors');
+        if (!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          if (mounted) setVendors(data);
+        } else {
+          console.error('Expected array but got:', data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch vendors:', err);
+      }
     })();
     return () => {
       mounted = false;

@@ -45,3 +45,11 @@ next-env.d.ts
 .cursor
 
 /lib/generated/prisma
+
+# tools
+cloud-sql-proxy
+
+# scripts
+scripts/verify-api.ts
+scripts/verify-persistence.ts
+scripts/verify-db.ts

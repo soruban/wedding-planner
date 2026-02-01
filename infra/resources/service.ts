@@ -61,7 +61,17 @@ export const createService = (props: ServiceProps) => {
               {
                 name: 'DATABASE_URL',
                 // ... (start of envs content matches existing)
-                value: pulumi.interpolate`postgresql://${props.database.dbUser}:${props.database.dbPassword}@localhost/${props.database.dbName}?host=/cloudsql/${props.database.instanceConnectionName}`,
+                value: pulumi
+                  .all([
+                    props.database.dbUser,
+                    props.database.dbPassword,
+                    props.database.dbName,
+                    props.database.instanceConnectionName,
+                  ])
+                  .apply(
+                    ([user, password, db, connectionName]) =>
+                      `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@localhost/${encodeURIComponent(db)}?host=/cloudsql/${connectionName}`,
+                  ),
               },
               {
                 name: 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
