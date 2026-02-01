@@ -21,9 +21,30 @@ model Guest {
 }
 
 model Venue {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   name      String
   location  String
+  events    EventVenue[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Event {
+  id        String        @id @default(uuid())
+  name      String
+  date      DateTime
+  venues    EventVenue[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model EventVenue {
+  id        String   @id @default(uuid())
+  eventId   String
+  venueId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, venueId])
 }
