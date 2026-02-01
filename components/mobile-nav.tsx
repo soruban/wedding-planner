@@ -2,6 +2,7 @@
 
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,8 +10,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/guests', label: 'Guests' },
+  { href: '/checklist', label: 'Checklist' },
+  { href: '/venues', label: 'Venues' },
+  { href: '/calendar', label: 'Calendar' },
+  { href: '/vendors', label: 'Vendors' },
+];
 
 export function MobileNav() {
+  const pathname = usePathname();
+
   return (
     <div className="md:hidden">
       <DropdownMenu>
@@ -21,36 +34,19 @@ export function MobileNav() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild>
-            <Link href="/" className="w-full cursor-pointer">
-              Home
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/guests" className="w-full cursor-pointer">
-              Guests
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/checklist" className="w-full cursor-pointer">
-              Checklist
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/venues" className="w-full cursor-pointer">
-              Venues
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/calendar" className="w-full cursor-pointer">
-              Calendar
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/vendors" className="w-full cursor-pointer">
-              Vendors
-            </Link>
-          </DropdownMenuItem>
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <DropdownMenuItem key={item.href} asChild>
+                <Link
+                  href={item.href}
+                  className={cn('w-full cursor-pointer', isActive && 'bg-accent font-medium')}
+                >
+                  {item.label}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
