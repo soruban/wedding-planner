@@ -89,13 +89,73 @@ docker run -p 3000:3000 wedding-planner
 # Test at http://localhost:3000
 ```
 
-## Post-Deployment
-
-After deployment, you'll receive a URL like:
-
-```
 https://wedding-planner-xxxxx-uc.a.run.app
-```
+
+````
+
+### Database Setup (Cloud SQL)
+
+1. **Create Cloud SQL Instance**:
+   ```bash
+   # Enable Cloud SQL Admin API
+   gcloud services enable sqladmin.googleapis.com
+
+   # Create the instance (change PASSWORD)
+   gcloud sql instances create wedding-planner-db \
+     --database-version=POSTGRES_15 \
+     --cpu=1 \
+     --memory=3840MB \
+     --region=us-central1 \
+     --root-password=PASSWORD
+````
+
+2. **Create Database**:
+
+   ```bash
+   gcloud sql databases create wedding_planner --instance=wedding-planner-db
+   ```
+
+3. **Get Connection Name**:
+
+   ```bash
+   gcloud sql instances describe wedding-planner-db --format="value(connectionName)"
+   # Output example: to-the-altar:us-central1:wedding-planner-db
+   ```
+
+4. **Prepare Environment Variables for Cloud Run**:
+   You need to set `DATABASE_URL` for the application.
+
+   ```bash
+   # Format: postgresql://<user>:<password>@localhost/<db_name>?host=/cloudsql/<project:region:instance>
+   # Note: local socket connection is used in Cloud Run
+   ```
+
+   Deploy with the connection:
+
+   ```bash
+   gcloud run services update wedding-planner \
+     --add-cloudsql-instances to-the-altar:us-central1:wedding-planner-db \
+     --set-env-vars DATABASE_URL="postgresql://postgres:PASSWORD@localhost/wedding_planner?host=/cloudsql/to-the-altar:us-central1:wedding-planner-db" \
+     --region us-central1
+   ```
+
+### Database Migrations (Production)
+
+To run migrations in production, you can use `prisma migrate deploy`. Since Cloud Run is stateless, the recommended approach is to run migrations from a temporary container or your local machine (using Cloud SQL Auth Proxy).
+
+**Option 1: From Local Machine (using Proxy)**:
+
+1. Start Cloud SQL Auth Proxy:
+   ```bash
+   ./cloud-sql-proxy to-the-altar:us-central1:wedding-planner-db
+   ```
+2. Run migration:
+   ```bash
+   DATABASE_URL="postgresql://postgres:PASSWORD@localhost:5432/wedding_planner" npx prisma migrate deploy
+   ```
+
+**Option 2: Cloud Build Job**:
+Add a step in `cloudbuild.yaml` to run migrations (requires VPC or Auth Proxy sidecar, which is complex). Stick to Option 1 for now.
 
 ### Update Environment Variables
 

@@ -1,20 +1,56 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Local Development
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18+ and pnpm
+- Docker Desktop (for local database)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Setup
+
+1. **Install dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Environment Variables**:
+
+   Copy the example environment file:
+
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+   Update `.env.local` with your Clerk credentials.
+
+3. **Start Local Database**:
+
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Initialize Database**:
+
+   Run migrations to create tables:
+
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. **Run the Development Server**:
+
+   ```bash
+   pnpm dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Database Management
+
+- **View Data**: `npx prisma studio`
+- **Create Migration**: `npx prisma migrate dev --name <migration_name>`
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

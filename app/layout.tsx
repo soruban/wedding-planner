@@ -12,6 +12,7 @@ import {
 } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ModeToggle } from '@/components/mode-toggle';
+import { MobileNav } from '@/components/mobile-nav';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -49,7 +50,7 @@ export default function RootLayout({
                   <Link href="/" className="font-semibold">
                     Wedding Planner
                   </Link>
-                  <div className="flex gap-3 ml-4">
+                  <div className="hidden md:flex gap-3 ml-4">
                     <Link href="/" className="text-sm text-zinc-600">
                       Home
                     </Link>
@@ -76,6 +77,7 @@ export default function RootLayout({
                     <UserButton />
                   </SignedIn>
                   <ModeToggle />
+                  <MobileNav />
                 </div>
               </nav>
             </header>

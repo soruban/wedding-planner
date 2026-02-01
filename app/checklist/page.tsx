@@ -62,7 +62,7 @@ export default function ChecklistPage() {
     <main className="max-w-3xl mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-4">Checklist</h2>
 
-      <form onSubmit={handleAdd} className="flex gap-2 mb-6">
+      <form onSubmit={handleAdd} className="flex flex-col md:flex-row gap-2 mb-6">
         <input
           className="flex-1 rounded border px-3 py-2"
           placeholder="Add an item"

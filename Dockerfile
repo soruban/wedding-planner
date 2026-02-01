@@ -19,6 +19,10 @@ ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
 ENV NEXT_TELEMETRY_DISABLED 1
 # Skip lefthook install in Docker build
 ENV SKIP_POSTINSTALL=1
+
+# Generate Prisma Client
+RUN npx prisma generate
+
 RUN pnpm build
 
 # Production image
