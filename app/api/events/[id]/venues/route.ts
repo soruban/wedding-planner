@@ -1,42 +1,52 @@
 import { NextResponse } from 'next/server';
-import { addVenueToEvent, removeVenueFromEvent } from '@/lib/data/events';
-import { getVenues } from '@/lib/data/venues';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id: eventId } = await params;
-  const body = await request.json();
+  try {
+    const { id } = await params;
+    const body = await request.json();
 
-  if (!body?.venueId) {
-    return NextResponse.json({ error: 'venueId is required' }, { status: 400 });
+    if (!body?.venueId) {
+      return NextResponse.json({ error: 'venueId is required' }, { status: 400 });
+    }
+
+    await prisma.event.update({
+      where: { id },
+      data: {
+        venues: {
+          connect: { id: body.venueId },
+        },
+      },
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error('Error adding venue to event:', error);
+    return NextResponse.json({ error: 'Failed to add venue to event' }, { status: 500 });
   }
-
-  // Find the venue to get its full data
-  const venues = getVenues();
-  const venue = venues.find((v) => v.id === body.venueId);
-  if (!venue) {
-    return NextResponse.json({ error: 'venue not found' }, { status: 404 });
-  }
-
-  const result = addVenueToEvent(eventId, body.venueId, venue);
-  if (!result.ok) {
-    return NextResponse.json({ error: 'event not found' }, { status: 404 });
-  }
-
-  return NextResponse.json({ ok: true });
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id: eventId } = await params;
-  const body = await request.json();
+  try {
+    const { id } = await params;
+    const body = await request.json();
 
-  if (!body?.venueId) {
-    return NextResponse.json({ error: 'venueId is required' }, { status: 400 });
+    if (!body?.venueId) {
+      return NextResponse.json({ error: 'venueId is required' }, { status: 400 });
+    }
+
+    await prisma.event.update({
+      where: { id },
+      data: {
+        venues: {
+          disconnect: { id: body.venueId },
+        },
+      },
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error('Error removing venue from event:', error);
+    return NextResponse.json({ error: 'Failed to remove venue from event' }, { status: 500 });
   }
-
-  const result = removeVenueFromEvent(eventId, body.venueId);
-  if (!result.ok) {
-    return NextResponse.json({ error: 'event not found' }, { status: 404 });
-  }
-
-  return NextResponse.json({ ok: true });
 }

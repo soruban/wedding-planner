@@ -1,10 +1,10 @@
 export type Guest = {
   id: string;
-  name: string;
-  email?: string | null;
-  plusOne: boolean;
-  dietaryRequirements?: string | null;
-  isAttending?: boolean | null;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  relationship: string[];
+  dietaryRequirements: string | null;
   createdAt: Date;
   updatedAt: Date;
 };

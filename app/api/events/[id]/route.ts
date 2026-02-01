@@ -1,30 +1,30 @@
 import { NextResponse } from 'next/server';
-import { deleteEvent, updateEvent } from '@/lib/data/events';
+import { prisma } from '@/lib/prisma';
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  deleteEvent(id);
-  return NextResponse.json({ ok: true });
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const event = await prisma.event.update({
+      where: { id },
+      data: {
+        name: body.name,
+        date: body.date ? new Date(body.date) : undefined,
+      },
+      include: { venues: true },
+    });
+    return NextResponse.json(event);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
+  }
 }
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const body = await request.json();
-
-  const updateData: { name?: string; date?: Date } = {};
-  if (body.name !== undefined) updateData.name = body.name;
-  if (body.date !== undefined) {
-    const date = new Date(body.date);
-    if (isNaN(date.getTime())) {
-      return NextResponse.json({ error: 'invalid date format' }, { status: 400 });
-    }
-    updateData.date = date;
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    await prisma.event.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 });
   }
-
-  const event = updateEvent(id, updateData);
-  if (!event) {
-    return NextResponse.json({ error: 'event not found' }, { status: 404 });
-  }
-
-  return NextResponse.json(event);
 }
