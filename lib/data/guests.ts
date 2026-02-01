@@ -1,21 +1,26 @@
-import { Guest } from '../models/guest';
+import { prisma } from '@/lib/prisma';
+import { Guest } from '@/lib/models/guest';
 
-let guests: Guest[] = [
-  { id: '1', name: 'Alice Smith', email: 'alice@example.com', invited: true },
-  { id: '2', name: 'Bob Johnson', email: 'bob@example.com', invited: false },
-];
-
-export function getGuests() {
+export async function getGuests(): Promise<Guest[]> {
+  const guests = await prisma.guest.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
   return guests;
 }
 
-export function addGuest(g: Omit<Guest, 'id'>) {
-  const guest: Guest = { ...g, id: String(Date.now()) };
-  guests.push(guest);
+export async function addGuest(g: Pick<Guest, 'name' | 'email'>): Promise<Guest> {
+  const guest = await prisma.guest.create({
+    data: {
+      name: g.name,
+      email: g.email || null,
+    },
+  });
   return guest;
 }
 
-export function deleteGuest(id: string) {
-  guests = guests.filter((g) => g.id !== id);
+export async function deleteGuest(id: string): Promise<{ ok: boolean }> {
+  await prisma.guest.delete({
+    where: { id },
+  });
   return { ok: true };
 }

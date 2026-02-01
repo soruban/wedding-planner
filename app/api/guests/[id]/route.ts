@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
-import { deleteGuest } from '@/lib/data/guests';
+import { prisma } from '@/lib/prisma';
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  deleteGuest(id);
-  return NextResponse.json({ ok: true });
+  try {
+    const { id } = await params;
+    await prisma.guest.delete({
+      where: { id },
+    });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting guest:', error);
+    return NextResponse.json({ error: 'Failed to delete guest' }, { status: 500 });
+  }
 }

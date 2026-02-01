@@ -9,15 +9,35 @@ datasource db {
   provider = "postgresql"
 }
 
+enum RsvpStatus {
+  INVITED
+  NOT_INVITED
+  ACCEPTED
+  DECLINED
+}
+
 model Guest {
-  id        String   @id @default(uuid())
-  name      String
-  email     String?  @unique
-  plusOne   Boolean  @default(false)
+  id                  String       @id @default(uuid())
+  firstName           String
+  lastName            String
+  email               String?      @unique
+  relationship        String[]
   dietaryRequirements String?
-  isAttending Boolean?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  events              GuestEvent[]
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}
+
+model GuestEvent {
+  id      String     @id @default(uuid())
+  guestId String
+  eventId String
+  rsvp    RsvpStatus @default(INVITED)
+  extras  Int        @default(0)
+  guest   Guest      @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  event   Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([guestId, eventId])
 }
 
 model Venue {
@@ -34,6 +54,7 @@ model Event {
   name      String
   date      DateTime
   venues    EventVenue[]
+  guests    GuestEvent[]
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 }

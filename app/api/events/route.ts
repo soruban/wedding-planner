@@ -1,24 +1,50 @@
 import { NextResponse } from 'next/server';
-import { getEvents, addEvent } from '@/lib/data/events';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-  return NextResponse.json(getEvents());
+  try {
+    const events = await prisma.event.findMany({
+      orderBy: {
+        date: 'asc',
+      },
+      include: {
+        venues: true,
+      },
+    });
+    return NextResponse.json(events);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  if (!body?.name) {
-    return NextResponse.json({ error: 'name is required' }, { status: 400 });
-  }
-  if (!body?.date) {
-    return NextResponse.json({ error: 'date is required' }, { status: 400 });
-  }
+  try {
+    const body = await request.json();
+    const { name, date } = body;
 
-  const date = new Date(body.date);
-  if (isNaN(date.getTime())) {
-    return NextResponse.json({ error: 'invalid date format' }, { status: 400 });
-  }
+    if (!name) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    }
+    if (!date) {
+      return NextResponse.json({ error: 'Date is required' }, { status: 400 });
+    }
 
-  const event = addEvent({ name: body.name, date });
-  return NextResponse.json(event, { status: 201 });
+    const eventDate = new Date(date);
+    if (isNaN(eventDate.getTime())) {
+      return NextResponse.json({ error: 'Invalid date format' }, { status: 400 });
+    }
+
+    const event = await prisma.event.create({
+      data: {
+        name,
+        date: eventDate,
+      },
+    });
+
+    return NextResponse.json(event, { status: 201 });
+  } catch (error) {
+    console.error('Error creating event:', error);
+    return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
+  }
 }

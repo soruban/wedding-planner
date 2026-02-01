@@ -49,63 +49,72 @@ export const createService = (props: ServiceProps) => {
   });
 
   // Create Cloud Run Service
-  const service = new gcp.cloudrunv2.Service('wedding-planner', {
-    location,
-    template: {
-      containers: [
-        {
-          image: image.imageName,
-          envs: [
-            {
-              name: 'DATABASE_URL',
-              value: pulumi.interpolate`postgresql://${props.database.dbUser}:${props.database.dbPassword}@localhost/${props.database.dbName}?host=/cloudsql/${props.database.instanceConnectionName}`,
-            },
-            {
-              name: 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
-              valueSource: {
-                secretKeyRef: {
-                  secret: clerkPubKeySecret.secretId,
-                  version: 'latest',
+  const service = new gcp.cloudrunv2.Service(
+    'wedding-planner',
+    {
+      location,
+      template: {
+        containers: [
+          {
+            image: pulumi.interpolate`${props.imageName}:latest`, // Force use of 'latest' tag
+            envs: [
+              {
+                name: 'DATABASE_URL',
+                // ... (start of envs content matches existing)
+                value: pulumi.interpolate`postgresql://${props.database.dbUser}:${props.database.dbPassword}@localhost/${props.database.dbName}?host=/cloudsql/${props.database.instanceConnectionName}`,
+              },
+              {
+                name: 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
+                valueSource: {
+                  secretKeyRef: {
+                    secret: clerkPubKeySecret.secretId,
+                    version: 'latest',
+                  },
                 },
               },
-            },
-            {
-              name: 'CLERK_SECRET_KEY',
-              valueSource: {
-                secretKeyRef: {
-                  secret: clerkSecretKeySecret.secretId,
-                  version: 'latest',
+              {
+                name: 'CLERK_SECRET_KEY',
+                valueSource: {
+                  secretKeyRef: {
+                    secret: clerkSecretKeySecret.secretId,
+                    version: 'latest',
+                  },
                 },
               },
-            },
-          ],
-          volumeMounts: [
-            {
-              name: 'cloudsql',
-              mountPath: '/cloudsql',
-            },
-          ],
-        },
-      ],
-      volumes: [
-        {
-          name: 'cloudsql',
-          cloudSqlInstance: {
-            instances: [props.database.instanceConnectionName],
+              {
+                name: 'DEPLOY_TIMESTAMP',
+                value: new Date().toISOString(),
+              },
+            ],
+            volumeMounts: [
+              {
+                name: 'cloudsql',
+                mountPath: '/cloudsql',
+              },
+            ],
           },
+        ],
+        volumes: [
+          {
+            name: 'cloudsql',
+            cloudSqlInstance: {
+              instances: [props.database.instanceConnectionName],
+            },
+          },
+        ],
+        scaling: {
+          maxInstanceCount: 1, // Keep costs low for now
+        },
+      },
+      traffics: [
+        {
+          type: 'TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST',
+          percent: 100,
         },
       ],
-      scaling: {
-        maxInstanceCount: 1, // Keep costs low for now
-      },
     },
-    traffics: [
-      {
-        type: 'TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST',
-        percent: 100,
-      },
-    ],
-  });
+    { dependsOn: [image] },
+  );
 
   // Make service public
   new gcp.cloudrunv2.ServiceIamMember('public-access', {
