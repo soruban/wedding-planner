@@ -1,0 +1,3 @@
+name: wedding-planner-infra
+runtime: nodejs
+description: Infrastructure for Wedding Planner app
