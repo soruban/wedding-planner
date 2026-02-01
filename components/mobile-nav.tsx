@@ -37,6 +37,11 @@ export function MobileNav() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
+            <Link href="/venues" className="w-full cursor-pointer">
+              Venues
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="/calendar" className="w-full cursor-pointer">
               Calendar
             </Link>

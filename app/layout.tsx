@@ -60,6 +60,9 @@ export default function RootLayout({
                     <Link href="/checklist" className="text-sm text-zinc-600">
                       Checklist
                     </Link>
+                    <Link href="/venues" className="text-sm text-zinc-600">
+                      Venues
+                    </Link>
                     <Link href="/calendar" className="text-sm text-zinc-600">
                       Calendar
                     </Link>
