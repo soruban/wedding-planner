@@ -16,21 +16,27 @@ We use **Pulumi** to automate the infrastructure provisioning and deployment.
 3.  **GCP Authentication**:
     ```bash
     gcloud auth application-default login
+    gcloud auth configure-docker us-central1-docker.pkg.dev
     ```
 
 ## Configuration
 
-1.  **Navigate to infra directory**:
     ```bash
     cd infra
     ```
-2.  **Install dependencies** (if not done):
+
+2.  **Initialize Stack** (First time only):
+    ```bash
+    # You will be prompted for a passphrase (can be empty for local dev)
+    pulumi stack init dev
+    ```
+3.  **Install dependencies** (if not done):
     ```bash
     npm install
     ```
-3.  **Set Database Password**:
+4.  **Run Deployment**:
     ```bash
-    pulumi config set --secret dbPassword <YOUR_SECURE_PASSWORD>
+    pulumi up
     ```
 
 ## Deploying

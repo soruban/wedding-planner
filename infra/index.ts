@@ -1,4 +1,10 @@
 import * as pulumi from '@pulumi/pulumi';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load environment variables from the root .env.local file
+dotenv.config({ path: path.join(__dirname, '../.env.local') });
+
 import { createRegistry } from './resources/registry';
 import { createDatabase } from './resources/database';
 import { createService } from './resources/service';
@@ -17,7 +23,7 @@ const { serviceUrl } = createService({
     publicIp: instance.publicIpAddress,
     dbName: database.name,
     dbUser: user.name,
-    dbPassword: user.password,
+    dbPassword: user.password.apply((p) => p || ''),
   },
 });
 

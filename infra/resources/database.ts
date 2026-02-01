@@ -3,8 +3,12 @@ import * as pulumi from '@pulumi/pulumi';
 import * as random from '@pulumi/random';
 
 export const createDatabase = () => {
-  const config = new pulumi.Config();
-  const dbPassword = config.requireSecret('dbPassword');
+  // CONFIGURATION: Generate a secure random password automatically
+  const dbPassword = new random.RandomPassword('db-password', {
+    length: 24,
+    special: true,
+    overrideSpecial: '!#$%&*()-_=+[]{}<>:?', // Avoid problematic chars for URLs
+  }).result;
 
   // Create Cloud SQL Instance
   const instance = new gcp.sql.DatabaseInstance('wedding-planner-db', {
@@ -31,5 +35,18 @@ export const createDatabase = () => {
     password: dbPassword,
   });
 
-  return { instance, database, user };
+  // Store Password in Secret Manager
+  const secret = new gcp.secretmanager.Secret('wedding-planner-db-password', {
+    replication: {
+      auto: {},
+    },
+    secretId: 'wedding-planner-db-password',
+  });
+
+  new gcp.secretmanager.SecretVersion('wedding-planner-db-password-v1', {
+    secret: secret.id,
+    secretData: dbPassword,
+  });
+
+  return { instance, database, user, secret };
 };

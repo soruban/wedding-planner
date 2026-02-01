@@ -2,3 +2,4 @@ config:
   gcp:project: to-the-altar
   gcp:region: us-central1
   wedding-planner-infra:dbPassword: CHANGEME_TO_SECURE_PASSWORD
+encryptionsalt: v1:7dT+M3L2vpQ=:v1:y73bw+YW/MzqPF5o:2DMs4fN2WbSeoTOIcd33gFFKPf1ilQ==
