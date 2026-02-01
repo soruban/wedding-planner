@@ -54,6 +54,7 @@ export default function RootLayout({
                   <div className="hidden md:flex gap-3 ml-4">
                     <NavLink href="/">Home</NavLink>
                     <NavLink href="/guests">Guests</NavLink>
+                    <NavLink href="/events">Events</NavLink>
                     <NavLink href="/checklist">Checklist</NavLink>
                     <NavLink href="/venues">Venues</NavLink>
                     <NavLink href="/calendar">Calendar</NavLink>
