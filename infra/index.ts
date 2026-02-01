@@ -27,5 +27,6 @@ const { serviceUrl } = createService({
   },
 });
 
-// Export the URL
+// Export the URL and Connection Name
 export const url = serviceUrl;
+export const instanceConnectionName = instance.connectionName;

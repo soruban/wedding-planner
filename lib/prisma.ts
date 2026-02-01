@@ -8,16 +8,12 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const poolConfig: any = { connectionString };
-if (process.env.NODE_ENV === 'production' && connectionString) {
-  try {
-    const url = new URL(connectionString);
-    const host = url.searchParams.get('host');
-    if (host) {
-      poolConfig.host = host;
-    }
-  } catch (e) {
-    console.error('Failed to parse DATABASE_URL', e);
-  }
+
+// If you need to customize the pool config for specific environments, do it here.
+// But generally, the connection string is enough for 'pg' to connect.
+if (process.env.NODE_ENV === 'production') {
+  // Ensure SSL is used in production if needed, or other config
+  // poolConfig.ssl = { rejectUnauthorized: false };
 }
 
 const pool = new Pool(poolConfig);
