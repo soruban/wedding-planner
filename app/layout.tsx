@@ -2,6 +2,16 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ModeToggle } from '@/components/mode-toggle';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -24,34 +34,55 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <header className="border-b">
-          <nav className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <Link href="/" className="font-semibold">
-              Wedding Planner
-            </Link>
-            <div className="flex gap-3 ml-4">
-              <Link href="/" className="text-sm text-zinc-600">
-                Home
-              </Link>
-              <Link href="/guests" className="text-sm text-zinc-600">
-                Guests
-              </Link>
-              <Link href="/checklist" className="text-sm text-zinc-600">
-                Checklist
-              </Link>
-              <Link href="/calendar" className="text-sm text-zinc-600">
-                Calendar
-              </Link>
-              <Link href="/vendors" className="text-sm text-zinc-600">
-                Vendors
-              </Link>
-            </div>
-          </nav>
-        </header>
-        <main>{children}</main>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <header className="border-b">
+              <nav className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-4">
+                  <Link href="/" className="font-semibold">
+                    Wedding Planner
+                  </Link>
+                  <div className="flex gap-3 ml-4">
+                    <Link href="/" className="text-sm text-zinc-600">
+                      Home
+                    </Link>
+                    <Link href="/guests" className="text-sm text-zinc-600">
+                      Guests
+                    </Link>
+                    <Link href="/checklist" className="text-sm text-zinc-600">
+                      Checklist
+                    </Link>
+                    <Link href="/calendar" className="text-sm text-zinc-600">
+                      Calendar
+                    </Link>
+                    <Link href="/vendors" className="text-sm text-zinc-600">
+                      Vendors
+                    </Link>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <SignedOut>
+                    <SignInButton />
+                    <SignUpButton />
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                  <ModeToggle />
+                </div>
+              </nav>
+            </header>
+            <main>{children}</main>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

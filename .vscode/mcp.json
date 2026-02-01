@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "clerk": {
+      "url": "https://cursor.com/en-US/install-mcp?name=clerk&config=eyJ1cmwiOiJodHRwczovL21jcC5jbGVyay5jb20vbWNwIn0%3D",
+      "type": "http"
+    }
+  },
+  "inputs": []
+}

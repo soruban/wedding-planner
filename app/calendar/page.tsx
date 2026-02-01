@@ -150,7 +150,7 @@ export default function CalendarPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar View */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg border p-4">
+          <div className="bg-card rounded-lg border p-4">
             {/* Month Navigation */}
             <div className="flex items-center justify-between mb-4">
               <Button onClick={() => navigateMonth('prev')} variant="outline">
@@ -168,7 +168,10 @@ export default function CalendarPage() {
             <div className="grid grid-cols-7 gap-1">
               {/* Day Headers */}
               {dayNames.map((day) => (
-                <div key={day} className="text-center text-sm font-medium text-zinc-600 p-2">
+                <div
+                  key={day}
+                  className="text-center text-sm font-medium text-muted-foreground p-2"
+                >
                   {day}
                 </div>
               ))}
@@ -190,12 +193,12 @@ export default function CalendarPage() {
                     onClick={() => handleDateClick(day)}
                     className={`
                       p-2 min-h-[80px] border rounded text-left
-                      hover:bg-zinc-50 transition-colors
-                      ${isToday ? 'bg-blue-50 border-blue-300' : ''}
-                      ${isSelected ? 'ring-2 ring-blue-500' : ''}
+                      hover:bg-accent transition-colors
+                      ${isToday ? 'bg-primary/10 border-primary' : ''}
+                      ${isSelected ? 'ring-2 ring-ring' : ''}
                     `}
                   >
-                    <div className={`text-sm font-medium mb-1 ${isToday ? 'text-blue-600' : ''}`}>
+                    <div className={`text-sm font-medium mb-1 ${isToday ? 'text-primary' : ''}`}>
                       {day}
                     </div>
                     <div className="space-y-1">
@@ -204,15 +207,17 @@ export default function CalendarPage() {
                           key={task.id}
                           className={`text-xs px-1 py-0.5 rounded truncate ${
                             task.done
-                              ? 'bg-zinc-200 text-zinc-500 line-through'
-                              : 'bg-blue-100 text-blue-800'
+                              ? 'bg-muted text-muted-foreground line-through'
+                              : 'bg-primary/20 text-primary'
                           }`}
                         >
                           {task.title}
                         </div>
                       ))}
                       {dayTasks.length > 2 && (
-                        <div className="text-xs text-zinc-500">+{dayTasks.length - 2} more</div>
+                        <div className="text-xs text-muted-foreground">
+                          +{dayTasks.length - 2} more
+                        </div>
                       )}
                     </div>
                   </button>
@@ -225,7 +230,7 @@ export default function CalendarPage() {
         {/* Task Form & List */}
         <div className="space-y-4">
           {showTaskForm && selectedDate && (
-            <div className="bg-white rounded-lg border p-4">
+            <div className="bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3">
                 Add Task for {new Date(selectedDate).toLocaleDateString()}
               </h3>
@@ -265,13 +270,13 @@ export default function CalendarPage() {
 
           {/* Tasks for Selected Date */}
           {selectedDate && (
-            <div className="bg-white rounded-lg border p-4">
+            <div className="bg-card rounded-lg border p-4">
               <h3 className="font-semibold mb-3">
                 Tasks for {new Date(selectedDate).toLocaleDateString()}
               </h3>
               <div className="space-y-2">
                 {getTasksForDate(selectedDate).length === 0 ? (
-                  <p className="text-sm text-zinc-500">No tasks for this date</p>
+                  <p className="text-sm text-muted-foreground">No tasks for this date</p>
                 ) : (
                   getTasksForDate(selectedDate).map((task) => (
                     <div
@@ -287,12 +292,14 @@ export default function CalendarPage() {
                         />
                         <div className="flex-1">
                           <div
-                            className={`text-sm ${task.done ? 'line-through text-zinc-500' : ''}`}
+                            className={`text-sm ${task.done ? 'line-through text-muted-foreground' : ''}`}
                           >
                             {task.title}
                           </div>
                           {task.description && (
-                            <div className="text-xs text-zinc-500 mt-1">{task.description}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {task.description}
+                            </div>
                           )}
                         </div>
                       </div>
@@ -312,7 +319,7 @@ export default function CalendarPage() {
           )}
 
           {!showTaskForm && !selectedDate && (
-            <div className="bg-white rounded-lg border p-4 text-center text-zinc-500 text-sm">
+            <div className="bg-card rounded-lg border p-4 text-center text-muted-foreground text-sm">
               Click on a date to add or view tasks
             </div>
           )}
