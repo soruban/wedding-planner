@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { GuestForm, GuestFormData } from '@/components/guest-form';
-import { Plus, Search, Trash2 } from 'lucide-react';
+import { Plus, Search, Trash2, Pencil } from 'lucide-react';
 
 type Event = {
   id: string;
@@ -51,8 +51,10 @@ export default function GuestsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
 
   const fetchData = async () => {
+    // ... (existing fetchData implementation)
     setLoading(true);
     try {
       const [guestsRes, eventsRes] = await Promise.all([
@@ -74,19 +76,24 @@ export default function GuestsPage() {
     fetchData();
   }, []);
 
-  const handleAddGuest = async (data: GuestFormData) => {
+  const handleSaveGuest = async (data: GuestFormData) => {
     try {
-      const res = await fetch('/api/guests', {
-        method: 'POST',
+      const url = editingGuest ? `/api/guests/${editingGuest.id}` : '/api/guests';
+      const method = editingGuest ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+
       if (res.ok) {
         await fetchData();
         setIsDialogOpen(false);
+        setEditingGuest(null);
       }
     } catch (error) {
-      console.error('Error adding guest', error);
+      console.error('Error saving guest', error);
     }
   };
 
@@ -102,7 +109,13 @@ export default function GuestsPage() {
     }
   };
 
+  const handleEdit = (guest: Guest) => {
+    setEditingGuest(guest);
+    setIsDialogOpen(true);
+  };
+
   const filteredGuests = guests.filter((guest) => {
+    // ... (existing filter implementation)
     const searchLower = search.toLowerCase();
     return (
       guest.firstName.toLowerCase().includes(searchLower) ||
@@ -111,6 +124,7 @@ export default function GuestsPage() {
     );
   });
 
+  // ... (existing getRsvpBadgeColor)
   const getRsvpBadgeColor = (status: string) => {
     switch (status) {
       case 'ACCEPTED':
@@ -131,20 +145,45 @@ export default function GuestsPage() {
           <h2 className="text-3xl font-bold tracking-tight">Guests</h2>
           <p className="text-muted-foreground">Manage your wedding guest list.</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) setEditingGuest(null);
+          }}
+        >
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={() => setEditingGuest(null)}>
               <Plus className="mr-2 h-4 w-4" /> Add Guest
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Add New Guest</DialogTitle>
+              <DialogTitle>{editingGuest ? 'Edit Guest' : 'Add New Guest'}</DialogTitle>
             </DialogHeader>
             <GuestForm
+              initialData={
+                editingGuest
+                  ? {
+                      firstName: editingGuest.firstName,
+                      lastName: editingGuest.lastName,
+                      email: editingGuest.email || '',
+                      dietaryRequirements: editingGuest.dietaryRequirements || '',
+                      relationship: editingGuest.relationship,
+                      events: editingGuest.events.map((e) => ({
+                        eventId: e.eventId,
+                        rsvp: e.rsvp,
+                        extras: e.extras,
+                      })),
+                    }
+                  : undefined
+              }
               availableEvents={events}
-              onSubmit={handleAddGuest}
-              onCancel={() => setIsDialogOpen(false)}
+              onSubmit={handleSaveGuest}
+              onCancel={() => {
+                setIsDialogOpen(false);
+                setEditingGuest(null);
+              }}
             />
           </DialogContent>
         </Dialog>
@@ -173,7 +212,7 @@ export default function GuestsPage() {
               {events.map((event) => (
                 <TableHead key={event.id}>{event.name}</TableHead>
               ))}
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[100px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -228,14 +267,24 @@ export default function GuestsPage() {
                     );
                   })}
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(guest.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(guest)}
+                        className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(guest.id)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
