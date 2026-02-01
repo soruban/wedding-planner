@@ -5,7 +5,7 @@ export default function Home() {
     <main className="flex min-h-screen items-center justify-center bg-background">
       <div className="max-w-4xl px-6 py-20">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Hello, Wedding Planner!</h1>
+          <h1 className="text-4xl font-bold mb-4">Hello, To The Altar!</h1>
           <p className="text-lg text-muted-foreground">
             Welcome to To The Altar — your all-in-one wedding planning companion.
           </p>

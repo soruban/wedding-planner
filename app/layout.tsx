@@ -48,8 +48,8 @@ export default function RootLayout({
             <header className="border-b">
               <nav className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-4">
-                  <Link href="/" className="font-semibold">
-                    Wedding Planner
+                  <Link href="/" className="font-semibold text-xl tracking-tight">
+                    To The Altar
                   </Link>
                   <div className="hidden md:flex gap-3 ml-4">
                     <NavLink href="/">Home</NavLink>
